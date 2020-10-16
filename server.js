@@ -7,6 +7,8 @@ const PORT = 40040;
 
 // Global Middlewares
 app.use(cors());
+// Add cors
+app.options('*', cors());
 app.use(bodyParser.urlencoded({ extended: true })).use(bodyParser.json());
 
 // Routes
