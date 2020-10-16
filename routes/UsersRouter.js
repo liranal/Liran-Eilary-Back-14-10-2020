@@ -4,9 +4,11 @@ const {
   GetUserByID,
   UpdateUserByID,
   DeleteUserByID,
+  PatchUsernameByID,
 } = require("../middleware/DBMiddleware/DBMiddleware");
 const express = require("express");
 const VerifyToken = require("../middleware/AuthMiddleware/VerifyToken");
+const { UserAlreadyExist } = require("../Responses");
 const router = express.Router();
 
 router.get("/", [VerifyToken, GetAllUsers], (req, res) => {
@@ -25,7 +27,7 @@ router.get("/:id", [VerifyToken, GetUserByID], (req, res) => {
   }
 });
 
-router.post("/", PostUser, (req, res) => {
+router.post("/", [VerifyToken, PostUser], (req, res) => {
   if (res.err) {
     res
       .status(500)
@@ -35,7 +37,7 @@ router.post("/", PostUser, (req, res) => {
   }
 });
 
-router.put("/:id", UpdateUserByID, (req, res) => {
+router.put("/:id", [VerifyToken, UpdateUserByID], (req, res) => {
   if (res.err) {
     res.status(500).send("There was a problem updating the user.");
   } else {
@@ -43,7 +45,18 @@ router.put("/:id", UpdateUserByID, (req, res) => {
   }
 });
 
-router.delete("/:id", DeleteUserByID, (req, res) => {
+router.patch("/:id", [VerifyToken, PatchUsernameByID], (req, res) => {
+  if (res.err) {
+    if(res.err.code === 11000){
+      return res.status(UserAlreadyExist.Code).send(UserAlreadyExist.Message)
+    }
+    res.status(500).send("There was a problem updating the user.");
+  } else {
+    res.json(res.updatedUser);
+  }
+});
+
+router.delete("/:id", [VerifyToken, DeleteUserByID], (req, res) => {
   if (res.err) {
     res.status(500).send("There was a problem deleting the user.");
   } else {

@@ -8,9 +8,9 @@ const VerifyToken = require("../../middleware/AuthMiddleware/VerifyToken");
 
 router.use(bodyParser.urlencoded({ extended: false })).use(bodyParser.json());
 var User = require("../../models/UserSchema");
+const { UserAlreadyExist,EmailAlreadyExist } = require("../../Responses");
 
 router.post("/register", (req, res) => {
-  console.log(req.body);
   var hashPassword = bcrypt.hashSync(req.body.password, 8);
   User.create(
     {
@@ -19,10 +19,17 @@ router.post("/register", (req, res) => {
       password: hashPassword,
     },
     (err, user) => {
-      if (err)
+      if (err){
+        if(err.errors.username){
+          return res.status(UserAlreadyExist.Code).send(UserAlreadyExist.Message)
+        }
+        if(err.errors.email){
+          return res.status(EmailAlreadyExist.Code).send(EmailAlreadyExist.Message)
+        }
         return res
           .status(500)
           .send("There was a problem registering the user." + err);
+      }
       var token = jwt.sign({ id: user._id }, config.secret, {
         expiresIn: 86400,
       });

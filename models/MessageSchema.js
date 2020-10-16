@@ -3,6 +3,7 @@ const uniq = require("mongoose-unique-validator");
 var Schema = mongoose.Schema;
 
 var MessageSchema = new Schema({
+  Copy: {type: String, required: true},
   Sender: { type: String, required: true },
   Receiver: { type: String, required: true },
   Message: { type: String, required: true },

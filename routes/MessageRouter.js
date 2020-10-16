@@ -7,21 +7,25 @@ const express = require("express");
 const VerifyToken = require("../middleware/AuthMiddleware/VerifyToken");
 const router = express.Router();
 
-router.get("/:id", [VerifyToken, GetAllMessages], (req, res) => {
+router.get("/:username", [VerifyToken, GetAllMessages], (req, res) => {
   if (res.err) {
     return res.status(500).send("There was a problem finding the messages.");
   } else {
-    res.json({ Messages: [...res.Messages] });
+    res.json({
+      Messages: [...res.Messages]
+    });
   }
 });
 
 router.post("/", [VerifyToken, PostMessage], (req, res) => {
   if (res.err) {
     res
-      .status(500)
-      .send("There was a problem adding the information to the database.");
+      .status(res.err.Code)
+      .send(res.err.Message);
   } else {
-    res.json({ Message: res.newMessage });
+    res.json({
+      Message: res.newMessage
+    });
   }
 });
 
