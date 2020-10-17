@@ -1,9 +1,11 @@
 require("./database/db");
 const express = require("express");
 const app = express();
-const cors = require("cors");
 const bodyParser = require("body-parser");
-const PORT = 40040;
+const dotenv = require("dotenv");
+dotenv.config();
+const PORT = process.env.PORT || 8321;
+var cors = require("cors");
 
 // Global Middlewares
 app.use(cors());
