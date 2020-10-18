@@ -3,7 +3,9 @@ var router = express.Router();
 var bodyParser = require("body-parser");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
-const config = require("../../config");
+const dotenv = require("dotenv");
+dotenv.config();
+
 const VerifyToken = require("../../middleware/AuthMiddleware/VerifyToken");
 
 router.use(bodyParser.urlencoded({ extended: false })).use(bodyParser.json());
@@ -30,7 +32,7 @@ router.post("/register", (req, res) => {
           .status(500)
           .send("There was a problem registering the user." + err);
       }
-      var token = jwt.sign({ id: user._id }, config.secret, {
+      var token = jwt.sign({ id: user._id }, process.env.SECRET, {
         expiresIn: 86400,
       });
       return res.status(200).send({ auth: true, token: token });
@@ -47,7 +49,7 @@ router.post("/login", (req, res) => {
     if (!passwordValid)
       return res.status(401).send({ auth: false, token: null });
 
-    var token = jwt.sign({ id: user._id }, config.secret, { expiresIn: 86400 });
+    var token = jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: 86400 });
     res.status(200).send({ auth: true, token: token, userId: user._id });
   });
 });
