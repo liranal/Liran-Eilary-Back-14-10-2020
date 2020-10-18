@@ -6,8 +6,8 @@ const {
 module.exports = async (req, res, next) => {
   let newMessageCopy1 = new MessageSchema({
     Copy: req.body.sender,
-    Sender: req.body.sender,
-    Receiver: req.body.receiver === req.body.sender ? "Me" : req.body.receiver,
+    Sender: req.body.sender=== req.body.sender ? "Me" : req.body.Sender ,
+    Receiver: req.body.receiver,
     Message: req.body.message,
     Subject: req.body.subject,
     Date: req.body.date,
